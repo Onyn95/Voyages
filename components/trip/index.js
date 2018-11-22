@@ -23,10 +23,11 @@ import firebase from 'firebase';
   },
 
 ]
+var name = '';
 class Trip extends React.Component {
   constructor(props) {
     super(props);
-    this.state = ({tripList: [],tripLists:'', isMenuTripVisible: false, isAddPromptVisible:false})
+    this.state = ({tripList: [],name: '', isMenuTripVisible: false, isAddPromptVisible:false})
   }
 
  MenuTripVisubility = () => {
@@ -35,29 +36,31 @@ class Trip extends React.Component {
 hideAddPrompt = () => {
 Alert.alert("test");
 } 
+
 onAddTripPrompt = value => {
   firebase.database().ref('Trip/').push({
     name:value
   });
   
-   firebase.database().ref('Trip/').once('value').then(function(data) {
+   firebase.database().ref('Trip/').once('value',(data) => {
        // console.log(Object.keys(data.val()))
         var nom = data.val();
         var keys = Object.keys(nom)
-        //console.log(keys);
+        const tripList = [];
         
-        for(var i=0; i<keys.length;i++) {
-          var k = keys[i]
-          var name= nom[k].name;
-    
-        }
-     // this.setState({tripList: [...this.state.tripList,name]});
-      var test = [name] ;
+          data.forEach((doc)=> {
+            tripList.push({
+              key: doc.key,
+              name: doc.toJSON().name
+            });
+            console.log("tripList"+tripList)
+            this.setState({
+              tripList: tripList
+            })
+           })
       
-      this.setState({tripList:'lol'});
-      console.log(tripList);
+      
     });
-    
     this.setState({isAddPromptVisible:false})
     
     
